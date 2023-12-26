@@ -6,6 +6,7 @@ use kiddo::KdTree;
 use phf::phf_map;
 
 static FEEDS: phf::Map<&'static str, &'static str> = phf_map! {
+    // toronto area
     "ttc" => "http://opendata.toronto.ca/toronto.transit.commission/ttc-routes-and-schedules/OpenData_TTC_Schedules.zip",
     "upexpress" => "https://assets.metrolinx.com/raw/upload/v1703103920/Documents/Metrolinx/Open%20Data/UP%20GTFS/UP-GTFS.zip",
     "gotransit" => "https://assets.metrolinx.com/raw/upload/Documents/Metrolinx/Open%20Data/GO-GTFS.zip",
@@ -22,6 +23,26 @@ static FEEDS: phf::Map<&'static str, &'static str> = phf_map! {
     "barrie" => "http://www.myridebarrie.ca/gtfs/Google_transit.zip",
     "niagara" => "https://maps.niagararegion.ca/googletransit/NiagaraRegionTransit.zip",
     "milton" => "http://metrolinx.tmix.se/gtfs/gtfs-milton.zip",
+    // ontario other
+    "octranspo" => "https://www.octranspo.com/files/google_transit.zip",
+    "london" => "http://www.londontransit.ca/gtfsfeed/google_transit.zip",
+    "windsor" => "https://opendata.citywindsor.ca/Uploads/google_transit.zip",
+    "kingston" => "https://api.cityofkingston.ca/gtfs/gtfs.zip",
+    "thunderbay" => "http://api.nextlift.ca/gtfs.zip",
+    "simcoe" => "http://metrolinx.tmix.se/gtfs/gtfs-simcoe.zip",
+    "belleville" => "https://metrolinx.tmix.se/gtfs/gtfs-belleville.zip",
+    "cornwall" => "http://metrolinx.tmix.se/gtfs/gtfs-cornwall.zip",
+    "kawartha" => "http://metrolinx.tmix.se/gtfs/gtfs-kawartha.zip",
+    "orangeville" => "https://www.arcgis.com/sharing/rest/content/items/2ea26a0198014e338284445e2e17f15c/data",
+    "orillia" => "http://metrolinx.tmix.se/gtfs/gtfs-orillia.zip",
+    "sarnia" => "http://metrolinx.tmix.se/gtfs/gtfs-sarnia.zip",
+    "stratford" => "http://metrolinx.tmix.se/gtfs/gtfs-stratford.zip",
+    "temiskaming" => "http://metrolinx.tmix.se/gtfs/gtfs-temiskaming.zip",
+    "timmins" => "http://metrolinx.tmix.se/gtfs/gtfs-timmins.zip",
+    "saultstemarie" => "http://metrolinx.tmix.se/gtfs/gtfs-saultstemarie.zip",
+    "sudbury" => "https://sudbury.tmix.se/gtfs/gtfs.zip",
+    "northbay" => "https://northbay.tmix.se/gtfs/gtfs.zip",
+    "northland" => "https://ontarionorthland.tmix.se/gtfs/gtfs.zip",
 };
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, rkyv::Archive, rkyv::Deserialize, rkyv::Serialize, PartialEq)]
