@@ -47,6 +47,8 @@ static FEEDS: phf::Map<&'static str, &'static str> = phf_map! {
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, rkyv::Archive, rkyv::Deserialize, rkyv::Serialize, PartialEq)]
 struct Stop {
+    #[serde(skip_deserializing)]
+    agency: String,
     stop_id: String,
     stop_code: Option<String>,
     stop_name: String,
@@ -88,7 +90,8 @@ async fn download_feed(
 
     let mut stops = Vec::new();
     for result in reader.deserialize() {
-        let stop: Stop = result?;
+        let mut stop: Stop = result?;
+        stop.agency = String::from(agency);
         stops.push(stop);
     }
     println!("Done with {}", agency);
