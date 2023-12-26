@@ -354,7 +354,6 @@ dependencies = [
  "reqwest",
  "rkyv",
  "serde",
- "tempfile",
  "tokio",
  "zip",
 ]
