@@ -2,17 +2,17 @@ use std::io::Write;
 use std::error::Error;
 use std::fs::File;
 use futures::future;
-use kiddo::{KdTree, SquaredEuclidean};
+use kiddo::KdTree;
 use phf::phf_map;
 
 static FEEDS: phf::Map<&'static str, &'static str> = phf_map! {
     "ttc" => "http://opendata.toronto.ca/toronto.transit.commission/ttc-routes-and-schedules/OpenData_TTC_Schedules.zip",
-    "upexpress" => "https://assets.metrolinx.com/raw/upload/v1682367798/Documents/Metrolinx/Open%20Data/UP-GTFS.zip",
-    "gotransit" => "https://assets.metrolinx.com/raw/upload/v1683228856/Documents/Metrolinx/Open%20Data/GO-GTFS.zip",
+    "upexpress" => "https://assets.metrolinx.com/raw/upload/v1703103920/Documents/Metrolinx/Open%20Data/UP%20GTFS/UP-GTFS.zip",
+    "gotransit" => "https://assets.metrolinx.com/raw/upload/Documents/Metrolinx/Open%20Data/GO-GTFS.zip",
     "viarail" => "https://www.viarail.ca/sites/all/files/gtfs/viarail.zip",
     "yrt" => "https://www.yrt.ca/google/google_transit.zip",
-    "miway" => "https://www.miapp.ca/GTFS/google_transit.zip?#",
-    "brampton" => "http://www.brampton.ca/EN/City-Hall/OpenGov/Open-Data-Catalogue/Documents/Google_Transit.zip",
+    "miway" => "https://www.miapp.ca/GTFS/google_transit.zip",
+    "brampton" => "https://brampton.maps.arcgis.com/sharing/rest/content/items/a355aabd5a8c490186bdce559c9c75fb/data",
     "durham" => "https://maps.durham.ca/OpenDataGTFS/GTFS_Durham_TXT.zip",
     "grt" => "https://www.regionofwaterloo.ca/opendatadownloads/GRT_GTFS.zip",
     "hsr" => "http://googlehsrdocs.hamilton.ca/",
@@ -31,8 +31,8 @@ struct Stop {
     stop_name: String,
     tts_stop_name: Option<String>,
     stop_desc: Option<String>,
-    stop_lat: f32,
-    stop_lon: f32,
+    stop_lat: f64,
+    stop_lon: f64,
     zone_id: Option<String>,
     stop_url: Option<String>,
     location_type: Option<String>,
@@ -51,17 +51,19 @@ async fn download_feed(
         .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36")
         .send()
         .await?;
-    // let out_filename = tmp_dir.path().join(format!("{}.txt", agency));
-    // let mut out_file = File::create(out_filename)?;
     let content = resp.bytes().await?;
 
-    println!("Zipping {}", agency);
+    println!("Unzipping {}", agency);
 
     let reader = std::io::Cursor::new(content);
     let mut zip = zip::ZipArchive::new(reader).unwrap();
 
     let file = zip.by_name("stops.txt")?;
-    let mut reader = csv::Reader::from_reader(file);
+    let mut reader = csv::ReaderBuilder::new()
+        .trim(csv::Trim::Fields)
+        .from_reader(file);
+
+    println!("Deserializing {}", agency);
 
     let mut stops = Vec::new();
     for result in reader.deserialize() {
@@ -74,12 +76,8 @@ async fn download_feed(
 
 async fn download_feeds() -> Result<Vec<Stop>, Box<dyn Error>> {
     let mut stops = Vec::new();
-    // let tmp_dir = tempfile::Builder::new().prefix("stop_downloader").tempdir()?;
     let client = reqwest::Client::new();
 
-    // for (agency, &url) in FEEDS.iter() {
-        
-    // }
     let stop_maps = future::join_all(
         FEEDS.into_iter().map(|(agency, url)| {
             let client = &client;
@@ -96,14 +94,25 @@ async fn download_feeds() -> Result<Vec<Stop>, Box<dyn Error>> {
     Ok(stops)
 }
 
+fn stops_to_kdtree(stops: &Vec<Stop>) -> KdTree<f64, 2> {
+    let coords: Vec<[f64; 2]> = stops.iter()
+        .map(|stop| [stop.stop_lat, stop.stop_lon])
+        .collect();
+    KdTree::from(&coords)
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    println!("Hello, world!");
     let stops = download_feeds().await?;
 
-    // todo: kdtree
+    println!("Building kdtree");
 
-    let bytes = rkyv::to_bytes::<_, 256>(&stops).unwrap();
+    let kdtree = stops_to_kdtree(&stops);
+    let stops_kdtree = (stops, kdtree);
+
+    println!("Serializing");
+
+    let bytes = rkyv::to_bytes::<_, 256>(&stops_kdtree).unwrap();
     let mut file = File::create("stops.bin")?;
     Ok(file.write_all(&bytes)?)
 }

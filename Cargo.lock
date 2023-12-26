@@ -125,7 +125,6 @@ checksum = "8b6372023ac861f6e6dc89c8344a8f398fb42aaba2b5dbc649ca0c0e9dbcb627"
 dependencies = [
  "bytecheck_derive",
  "ptr_meta",
- "simdutf8",
 ]
 
 [[package]]
@@ -815,6 +814,7 @@ dependencies = [
  "rand",
  "rand_chacha",
  "rayon",
+ "rkyv",
  "sorted-vec",
  "tracing",
  "tracing-subscriber",
@@ -1257,14 +1257,12 @@ checksum = "527a97cdfef66f65998b5f3b637c26f5a5ec09cc52a3f9932313ac645f4190f5"
 dependencies = [
  "bitvec",
  "bytecheck",
- "bytes",
  "hashbrown 0.12.3",
  "ptr_meta",
  "rend",
  "rkyv_derive",
  "seahash",
  "tinyvec",
- "uuid",
 ]
 
 [[package]]
@@ -1420,12 +1418,6 @@ checksum = "f40ca3c46823713e0d4209592e8d6e826aa57e928f09752619fc696c499637f6"
 dependencies = [
  "lazy_static",
 ]
-
-[[package]]
-name = "simdutf8"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f27f6278552951f1f2b8cf9da965d10969b2efdea95a6ec47987ab46edfe263a"
 
 [[package]]
 name = "siphasher"
@@ -1739,12 +1731,6 @@ dependencies = [
  "idna",
  "percent-encoding",
 ]
-
-[[package]]
-name = "uuid"
-version = "1.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e395fcf16a7a3d8127ec99782007af141946b4795001f876d54fb0d55978560"
 
 [[package]]
 name = "valuable"
