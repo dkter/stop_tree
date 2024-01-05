@@ -8,7 +8,7 @@ use phf::phf_map;
 static FEEDS: phf::Map<&'static str, &'static str> = phf_map! {
     // toronto area
     "ttc" => "http://opendata.toronto.ca/toronto.transit.commission/ttc-routes-and-schedules/OpenData_TTC_Schedules.zip",
-    "upexpress" => "https://assets.metrolinx.com/raw/upload/v1703103920/Documents/Metrolinx/Open%20Data/UP%20GTFS/UP-GTFS.zip",
+    "upexpress" => "https://assets.metrolinx.com/raw/upload/Documents/Metrolinx/Open%20Data/UP-GTFS.zip",
     "gotransit" => "https://assets.metrolinx.com/raw/upload/Documents/Metrolinx/Open%20Data/GO-GTFS.zip",
     "viarail" => "https://www.viarail.ca/sites/all/files/gtfs/viarail.zip",
     "yrt" => "https://www.yrt.ca/google/google_transit.zip",
