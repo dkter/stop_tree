@@ -84,6 +84,7 @@ async fn download_feed(
     let file = zip.by_name("stops.txt")?;
     let mut reader = csv::ReaderBuilder::new()
         .trim(csv::Trim::Fields)
+        .flexible(true)
         .from_reader(file);
 
     println!("Deserializing {}", agency);
